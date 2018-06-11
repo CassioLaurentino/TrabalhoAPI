@@ -8,6 +8,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import br.com.upf.entity.Coment;
+import br.com.upf.entity.Product;
+import br.com.upf.entity.User;
 import br.com.upf.util.Conexao;
 
 
@@ -15,17 +17,39 @@ public class ComentsDAO extends Coment{
 	
 Conexao con = new Conexao();
 	
-	public Coment findComentsByUser (User usuario) {
+	public Coment findComentsByUser (String usuarioId) {
 		Connection conn = con.getConn();
-		String consulta = "SELECT * from coments where usuario = ?";
+		String consulta = "SELECT * from comentario where usuarioId = ?";
 		if (conn != null) {
 			try {
 				PreparedStatement stm = conn.prepareStatement(consulta);
-				stm.setUsuario(1, usuario);
+				stm.setString(1, usuarioId);
+				ResultSet rs = stm.executeQuery();
+		 		if (rs.next()) {
+					this.setId(rs.getString("id"));
+					this.setUsuarioId(rs.getString("usuarioId"));
+					this.setComentario(rs.getString("Comentario"));
+					this.setNota(rs.getString("Nota"));
+				} else {
+					return null;
+				}
+			} catch (SQLException e) {
+				System.out.println(e);
+			}
+		}
+		return this;
+	}
+	public Coment findComentsByProduct (String  produtoId) {
+		Connection conn = con.getConn();
+		String consulta = "SELECT * from comentario where productId = ?";
+		if (conn != null) {
+			try {
+				PreparedStatement stm = conn.prepareStatement(consulta);
+				stm.setString(1, produtoId);
 				ResultSet rs = stm.executeQuery();
 				if (rs.next()) {
 					this.setId(rs.getString("id"));
-					this.setUsuario(rs.getString("usuario"));
+					this.setProductId(rs.getString("produtoId"));
 					this.setComentario(rs.getString("Comentario"));
 					this.setNota(rs.getString("Nota"));
 				} else {
@@ -40,7 +64,7 @@ Conexao con = new Conexao();
 	
 	public List listComents() {
 		Connection conn = con.getConn();
-		String consulta = "SELECT * from coments";
+		String consulta = "SELECT * from comentario";
 		List<Coment> list = new ArrayList();
 		if (conn != null) {
 			try {
@@ -50,6 +74,8 @@ Conexao con = new Conexao();
 					this.setId(rs.getString("id"));
 					this.setComentario(rs.getString("Comentario"));
 					this.setNota(rs.getString("Nota"));
+					this.setProductId(rs.getString("produtoId"));
+					this.setUsuarioId(rs.getString("usuarioId"));
 					list.add(this);
 				}
 			} catch (SQLException e) {
@@ -59,22 +85,24 @@ Conexao con = new Conexao();
 		return list;
 	}
 
-	public boolean saveComents (String comentario,String nota,String id) {
+	public boolean saveComents (String comentario,String nota,String usuarioId,String productId) {
 		
 		Connection conn = con.getConn();
 
-		Product selectComent = findComentsByUser(id);
+		Coment selectComent = findComentsByUser(usuarioId);
 		if(selectComent != null){
 			return false;
 		}
 		
-		String insert = "insert into coments (comentario, nota) VALUES(?,?)";
+		String insert = "insert into comentario (comentario, nota, usuarioId, productId) VALUES(?,?,?,?)";
 		
 		if (conn != null) {
 			try {
 				PreparedStatement stm = conn.prepareStatement(insert);
 				stm.setString(1, comentario);
 				stm.setString(2, nota);
+				stm.setString(3, usuarioId);
+				stm.setString(4, productId);
 				System.out.println(stm.toString());
 				stm .executeUpdate();
 			} catch (SQLException e) {
@@ -86,17 +114,16 @@ Conexao con = new Conexao();
 
 }
 	
-	public boolean alterComents (String comentario,String nota,User usuario) {
+	public boolean alterComents (String comentario,String nota,String usuarioId) {
 		Connection conn = con.getConn();
-		Coment selectComents = findComentsByUser(usuario);	
+		Coment selectComents = findComentsByUser(usuarioId);	
 		
-		String sql = "UPDATE coments set nota = ? set comentario = ? where id = ?";
+		String sql = "UPDATE comentario set nota = ? set comentario = ?";
 		if (conn != null) {
 			try {
 				PreparedStatement stm = conn.prepareStatement(sql);
 				stm.setString(1, nota);
 				stm.setString(2, comentario);
-				stm.setString(3, selectProduct.getId());
 				stm.executeUpdate();
 			} catch (SQLException e) {
 				System.out.println(e);
@@ -108,7 +135,7 @@ Conexao con = new Conexao();
 	
 	public boolean deleteComents (String id) {
 		Connection conn = con.getConn();
-		String sql = "DELETE coments where id = ?";
+		String sql = "DELETE comentario where id = ?";
 		if (conn != null) {
 			try {
 				PreparedStatement stm = conn.prepareStatement(sql);

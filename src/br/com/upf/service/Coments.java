@@ -49,7 +49,8 @@ public class Coments {
 			}
 		
 			Boolean result = dao.saveComents(json.get("comentario").getAsString(),
-					json.get("nota").getAsString());
+					json.get("nota").getAsString(),json.get("usuarioId").getAsString(),
+					json.get("productId").getAsString());
 			
 			if (!result)
 				return Response
@@ -87,7 +88,7 @@ public class Coments {
 			}
 		
 			Boolean result = dao.alterComents(json.get("comentario").getAsString(),
-					json.get("nota").getAsString());
+					json.get("nota").getAsString(),json.get("usuarioId").getAsString());
 			
 			if (!result)
 				return Response
@@ -124,7 +125,7 @@ public class Coments {
 				return null;
 			}
 		
-			Boolean result = dao.deleteComents(json.get("comentario").getAsString());
+			Boolean result = dao.deleteComents(json.get("id").getAsString());
 			
 			if (!result)
 				return Response

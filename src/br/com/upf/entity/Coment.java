@@ -1,28 +1,18 @@
 package br.com.upf.entity;
 
-public class Coment {
+public class Coment{
 
 	private String comentario;
 	private String nota;
 	private String id;
-	private Product produto;
-	private User usuario;
+	private String productId;
+	private String usuarioId;
+	
 	
 	public Coment() {
 		super();
 		// TODO Auto-generated constructor stub
 	}
-
-	public Coment(String comentario, String nota, String id, Product produto, User usuario) {
-		super();
-		this.comentario = comentario;
-		this.nota = nota;
-		this.id = id;
-		this.produto = produto;
-		this.usuario = usuario;
-	}
-
-
 
 	public String getComentario() {
 		return comentario;
@@ -48,21 +38,30 @@ public class Coment {
 		this.id = id;
 	}
 
-	public Product getProduto() {
-		return produto;
+
+
+	public String getProductId() {
+		return productId;
 	}
 
-	public void setProduto(Product produto) {
-		this.produto = produto;
+
+
+	public void setProductId(String productId) {
+		this.productId = productId;
 	}
 
-	public User getUsuario() {
-		return usuario;
+
+
+	public String getUsuarioId() {
+		return usuarioId;
 	}
 
-	public void setUsuario(User usuario) {
-		this.usuario = usuario;
+
+
+	public void setUsuarioId(String usuarioId) {
+		this.usuarioId = usuarioId;
 	}
+
 	
 	
 
