@@ -8,6 +8,9 @@ public class Authenticate {
 	public boolean authenticate(String login, String senha) {
 		UserDAO uDao = new UserDAO();
 		User user = uDao.findUserByLogin(login);
+		if (user == null) {
+			return false;
+		}
 		if (login.equals(user.getLogin()) && senha.equals(user.getSenha())) {
 			return true;
 		}
