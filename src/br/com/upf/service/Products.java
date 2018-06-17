@@ -26,14 +26,15 @@ public class Products {
 	
 	ProductDAO dao = new ProductDAO();
 	Product product = new Product();
+	
 	@GET
 	@Produces(MediaType.APPLICATION_JSON)
 	public String listar(){
-		if (!request.getSession().isNew())
+
 			return new Gson().toJson(dao.listProduct());
-		request.getSession().invalidate();
-		return "Favor logar na aplicação";
+
 	}
+
 	@POST
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
@@ -67,19 +68,11 @@ public class Products {
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response alteracao(String stringJson) {
-		if (request.getSession().isNew()) {
-			request.getSession().invalidate();
-			return Response
-					.status(Status.BAD_REQUEST)
-					.type(MediaType.APPLICATION_JSON)
-					.entity(new Gson().toJson("Favor logar na aplicação"))
-					.build();
-		}
 		
 		JsonParser parser = new JsonParser();
 		JsonObject json = (JsonObject) parser.parse(stringJson);
 
-		if (json.get("login").isJsonNull() || json.get("nome").isJsonNull()) {
+		if (json.get("nome").isJsonNull() || json.get("descricao").isJsonNull()) {
 			System.out.println("Parâmetro obrigatório esta null");
 			return null;
 		}
@@ -97,7 +90,7 @@ public class Products {
 		return Response
 				.status(Status.OK)
 				.type(MediaType.APPLICATION_JSON)
-				.entity(new Gson().toJson(parser.parse(result.toString())))
+				.entity(new Gson().toJson("Produto alterado com sucesso"))
 				.build();
 	}
 	
@@ -105,19 +98,12 @@ public class Products {
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response delete(String stringJson) {
-		if (request.getSession().isNew()) {
-			request.getSession().invalidate();
-			return Response
-					.status(Status.BAD_REQUEST)
-					.type(MediaType.APPLICATION_JSON)
-					.entity(new Gson().toJson("Favor logar na aplicação"))
-					.build();
-		}
+
 		
 		JsonParser parser = new JsonParser();
 		JsonObject json = (JsonObject) parser.parse(stringJson);
 
-		if (json.get("nome").isJsonNull() || json.get("descricao").isJsonNull()) {
+		if (json.get("nome").isJsonNull()) {
 			System.out.println("Parâmetro obrigatório esta null");
 			return null;
 		}
@@ -134,7 +120,7 @@ public class Products {
 		return Response
 				.status(Status.OK)
 				.type(MediaType.APPLICATION_JSON)
-				.entity(new Gson().toJson(parser.parse(result.toString())))
+				.entity(new Gson().toJson("Produto deletado com sucesso"))
 				.build();
 	}
 	

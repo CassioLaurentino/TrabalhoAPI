@@ -45,10 +45,11 @@ public class ProductDAO extends Product{
 				PreparedStatement stm = conn.prepareStatement(consulta);
 				ResultSet rs = stm.executeQuery();
 				while (rs.next()) {
-					this.setId(rs.getString("id"));
-					this.setNome(rs.getString("nome"));
-					this.setDescricao(rs.getString("descricao"));
-					list.add(this);
+					Product printList = new Product();
+					printList.setId(rs.getString("id"));
+					printList.setNome(rs.getString("nome"));
+					printList.setDescricao(rs.getString("descricao"));
+					list.add(printList);					
 				}
 			} catch (SQLException e) {
 				System.out.println(e);
@@ -86,15 +87,20 @@ public class ProductDAO extends Product{
 	
 	public boolean alterProduct (String nome, String descricao) {
 		Connection conn = con.getConn();
-		Product selectProduct = findProductByName(nome);	
+		Product selectProduct = findProductByName(nome);
 		
-		String sql = "UPDATE produto set nome = ? set descricao = ? where id = ?";
+		if(selectProduct == null){
+			return false;
+		}
+		
+		Integer productId = Integer.parseInt(selectProduct.getId());
+		String sql = "UPDATE produto set nome = ?, descricao = ? where id = ?";
 		if (conn != null) {
 			try {
 				PreparedStatement stm = conn.prepareStatement(sql);
 				stm.setString(1, nome);
 				stm.setString(2, descricao);
-				stm.setString(3, selectProduct.getId());
+				stm.setInt(3, productId);
 				stm.executeUpdate();
 			} catch (SQLException e) {
 				System.out.println(e);
@@ -106,7 +112,13 @@ public class ProductDAO extends Product{
 	
 	public boolean deleteProduct (String nome) {
 		Connection conn = con.getConn();
-		String sql = "DELETE produto where nome = ?";
+		
+		Product selectProduct = findProductByName(nome);
+		if(selectProduct == null){
+			return false;
+		}
+		
+		String sql = "DELETE from produto where nome = ?";
 		if (conn != null) {
 			try {
 				PreparedStatement stm = conn.prepareStatement(sql);
