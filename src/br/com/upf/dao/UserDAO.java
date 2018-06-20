@@ -13,6 +13,30 @@ import br.com.upf.util.Conexao;
 public class UserDAO extends User{
 	Conexao con = new Conexao();
 	
+	public User findUserById (String id) {
+		Integer idInt = Integer.parseInt(id);
+		Connection conn = con.getConn();
+		String consulta = "SELECT * from usuario where id = ?";
+		if (conn != null) {
+			try {
+				PreparedStatement stm = conn.prepareStatement(consulta);
+				stm.setInt(1, idInt);;
+				ResultSet rs = stm.executeQuery();
+				if (rs.next()) {
+					this.setId(id);
+					this.setLogin(rs.getString("login"));
+					this.setNome(rs.getString("nome"));
+					this.setSenha(rs.getString("senha"));
+				} else {
+					return null;
+				}
+			} catch (SQLException e) {
+				System.out.println(e);
+			}
+		}
+		return this;
+	}
+	
 	public User findUserByLogin (String login) {
 		Connection conn = con.getConn();
 		String consulta = "SELECT * from usuario where login = ?";
@@ -79,7 +103,7 @@ public class UserDAO extends User{
 	
 	public boolean alterUser (String login, String nome, String senha) {
 		Connection conn = con.getConn();
-		String sql = "UPDATE usuario set nome = ? set senha = ? where login = ?";
+		String sql = "UPDATE usuario set nome = ?, senha = ? where login = ?";
 		if (conn != null) {
 			try {
 				PreparedStatement stm = conn.prepareStatement(sql);
