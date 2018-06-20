@@ -14,6 +14,7 @@ import br.com.upf.util.Conexao;
 public class CommentDAO extends Comment{
 	
 Conexao con = new Conexao();
+
 UserDAO uDao = new UserDAO();
 ProductDAO pDao = new ProductDAO();
 
