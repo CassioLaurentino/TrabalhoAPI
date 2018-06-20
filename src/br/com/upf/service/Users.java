@@ -101,7 +101,7 @@ public class Users {
 		return Response
 				.status(Status.OK)
 				.type(MediaType.APPLICATION_JSON)
-				.entity(new Gson().toJson(parser.parse(result.toString())))
+				.entity(new Gson().toJson("Usuário alterado com sucesso"))
 				.build();
 	}
 	
@@ -121,8 +121,7 @@ public class Users {
 		JsonParser parser = new JsonParser();
 		JsonObject json = (JsonObject) parser.parse(stringJson);
 
-		if (json.get("login").isJsonNull() || json.get("nome").isJsonNull()
-				|| json.get("senha").isJsonNull()) {
+		if (json.get("login").isJsonNull()) {
 			System.out.println("Parâmetro obrigatório esta null");
 			return null;
 		}
@@ -139,7 +138,7 @@ public class Users {
 		return Response
 				.status(Status.OK)
 				.type(MediaType.APPLICATION_JSON)
-				.entity(new Gson().toJson(parser.parse(result.toString())))
+				.entity(new Gson().toJson("Usuário deletado com sucesso"))
 				.build();
 	}
 

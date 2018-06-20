@@ -14,6 +14,29 @@ public class ProductDAO extends Product{
 
 	Conexao con = new Conexao();
 	
+	public Product findProductById (String id) {
+		Integer idInt = Integer.parseInt(id);
+		Connection conn = con.getConn();
+		String consulta = "SELECT * from produto where id = ?";
+		if (conn != null) {
+			try {
+				PreparedStatement stm = conn.prepareStatement(consulta);
+				stm.setInt(1, idInt);
+				ResultSet rs = stm.executeQuery();
+				if (rs.next()) {
+					this.setId(rs.getString("id"));
+					this.setNome(rs.getString("Nome"));
+					this.setDescricao(rs.getString("Descricao"));
+				} else {
+					return null;
+				}
+			} catch (SQLException e) {
+				System.out.println(e);
+			}
+		}
+		return this;
+	}
+	
 	public Product findProductByName (String Nome) {
 		Connection conn = con.getConn();
 		String consulta = "SELECT * from produto where nome = ?";

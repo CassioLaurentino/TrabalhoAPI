@@ -15,6 +15,9 @@ public class CommentDAO extends Comment{
 	
 Conexao con = new Conexao();
 
+UserDAO uDao = new UserDAO();
+ProductDAO pDao = new ProductDAO();
+
 //public Comment findCommentUserProd (Integer productid) {
 //	Connection conn = con.getConn();
 //	String consulta = "SELECT * from comments inner join produto on comments.produtoid = produto.id where produto.id = ?";
@@ -123,10 +126,10 @@ public Comment findCommentUserProd (Integer productid, Integer usuarioid ) {
 					this.setId(rs.getString("id"));
 					this.setComentario(rs.getString("Comentario"));
 					this.setNota(rs.getString("Nota"));
-					this.setProductid(rs.getInt("productid"));
+					this.setProductid(rs.getInt("produtoid"));
 					this.setUsuarioid(rs.getInt("usuarioid"));
-					
-					list.add(this);
+					Comment comm = new Comment(this.getComentario(), this.getNota(), this.getId(), this.getProductid(), this.getUsuarioid());
+					list.add(comm);
 				}
 			} catch (SQLException e) {
 				System.out.println(e);
@@ -134,17 +137,40 @@ public Comment findCommentUserProd (Integer productid, Integer usuarioid ) {
 		}
 		return list;
 	}
-
 	
+	public List<Comment> listComentsByQuery(String query) {
+		Connection conn = con.getConn();
+		String consulta = "SELECT * from comment where " + query;
+		List<Comment> list = new ArrayList<Comment>();
+		if (conn != null) {
+			try {
+				PreparedStatement stm = conn.prepareStatement(consulta);
+				ResultSet rs = stm.executeQuery();
+				while (rs.next()) {
+					this.setId(rs.getString("id"));
+					this.setComentario(rs.getString("Comentario"));
+					this.setNota(rs.getString("Nota"));
+					this.setProductid(rs.getInt("produtoid"));
+					this.setUsuarioid(rs.getInt("usuarioid"));
+					Comment comm = new Comment(this.getComentario(), this.getNota(), this.getId(), this.getProductid(), this.getUsuarioid());
+					list.add(comm);
+				}
+			} catch (SQLException e) {
+				System.out.println(e);
+			}
+		}
+		return list;
+	}
 	
 public boolean saveComent1(String comentario,String nota,Integer productid, Integer usuarioid) {
 		
 		Connection conn = con.getConn();
 
-		Comment selectComent = findCommentUserProd(productid, usuarioid);
-		if(selectComent == null){
+		if(findCommentUserProd(productid, usuarioid) != null)
 			return false;
-		}
+		
+		if(uDao.findUserById(usuarioid.toString()) == null || pDao.findProductById(productid.toString()) == null)
+			return false;
 		
 		String insert = "insert into comment (comentario, nota, produtoid, usuarioid) VALUES(?,?,?,?)";
 		
@@ -169,10 +195,9 @@ public boolean saveComent1(String comentario,String nota,Integer productid, Inte
 
 	public boolean alterComent (String comentario,String nota, Integer productid, Integer usuarioid) {
 		Connection conn = con.getConn();
-		Comment selectComent = findCommentUserProd(productid, usuarioid);
-		if(selectComent == null){
+		
+		if(findCommentUserProd(productid, usuarioid) == null)
 			return false;
-		}
 		
 		String sql = "UPDATE comment set nota = ?, comentario = ? where produtoid = ? and usuarioid = ?";
 		if (conn != null) {
@@ -194,10 +219,8 @@ public boolean saveComent1(String comentario,String nota,Integer productid, Inte
 	public boolean deleteComents (Integer productid, Integer usuarioid) {
 		Connection conn = con.getConn();
 		
-		Comment selectComent = findCommentUserProd(productid, usuarioid);
-		if(selectComent == null){
+		if(findCommentUserProd(productid, usuarioid) == null)
 			return false;
-		}
 		
 		String sql = "DELETE from comment where produtoid = ? and usuarioid = ?";
 		if (conn != null) {

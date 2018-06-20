@@ -39,6 +39,15 @@ public class Products {
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response insercao(String stringJson) {
+		if (request.getSession().isNew()) {
+			request.getSession().invalidate();
+			return Response
+					.status(Status.BAD_REQUEST)
+					.type(MediaType.APPLICATION_JSON)
+					.entity(new Gson().toJson("Favor logar na aplicação"))
+					.build();
+		}
+		
 		JsonParser parser = new JsonParser();
 		JsonObject json = (JsonObject) parser.parse(stringJson);
 
@@ -68,6 +77,14 @@ public class Products {
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response alteracao(String stringJson) {
+		if (request.getSession().isNew()) {
+			request.getSession().invalidate();
+			return Response
+					.status(Status.BAD_REQUEST)
+					.type(MediaType.APPLICATION_JSON)
+					.entity(new Gson().toJson("Favor logar na aplicação"))
+					.build();
+		}
 		
 		JsonParser parser = new JsonParser();
 		JsonObject json = (JsonObject) parser.parse(stringJson);
@@ -98,7 +115,14 @@ public class Products {
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response delete(String stringJson) {
-
+		if (request.getSession().isNew()) {
+			request.getSession().invalidate();
+			return Response
+					.status(Status.BAD_REQUEST)
+					.type(MediaType.APPLICATION_JSON)
+					.entity(new Gson().toJson("Favor logar na aplicação"))
+					.build();
+		}
 		
 		JsonParser parser = new JsonParser();
 		JsonObject json = (JsonObject) parser.parse(stringJson);
